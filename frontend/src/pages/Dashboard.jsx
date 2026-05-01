@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Dashboard() {
+  const API = import.meta.env.VITE_API_URL;
+
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
   const [title, setTitle] = useState("");
@@ -18,7 +20,7 @@ export default function Dashboard() {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tasks", {
+      const res = await axios.get(`${API}/api/tasks`, {
         headers: { Authorization: token }
       });
       setTasks(res.data);
@@ -29,7 +31,7 @@ export default function Dashboard() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users", {
+      const res = await axios.get(`${API}/api/users`, {
         headers: { Authorization: token }
       });
       setUsers(res.data);
@@ -43,7 +45,7 @@ export default function Dashboard() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/tasks",
+        `${API}/api/tasks`,
         { title, status: "todo", assignedTo },
         { headers: { Authorization: token } }
       );
@@ -51,14 +53,14 @@ export default function Dashboard() {
       setAssignedTo("");
       fetchTasks();
     } catch (err) {
-      alert(err.response?.data || "Error creating task");
+      alert(err.response?.data?.message || "Error creating task");
     }
   };
 
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/tasks/${id}`,
+        `${API}/api/tasks/${id}`,
         { status },
         { headers: { Authorization: token } }
       );
@@ -104,7 +106,6 @@ export default function Dashboard() {
   return (
     <div style={{ padding: "30px", background: "#f5f5f5", minHeight: "100vh" }}>
 
-      {}
       <div style={{
         display: "flex",
         justifyContent: "space-between",
@@ -117,10 +118,8 @@ export default function Dashboard() {
 
       <p style={{ color: "#555" }}>Role: {role}</p>
 
-      {}
       {role === "admin" && (
         <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-          
           <input
             placeholder="Task title"
             value={title}
@@ -151,7 +150,6 @@ export default function Dashboard() {
 
       {tasks.length === 0 && <p>No tasks available</p>}
 
-      {}
       {tasks.map(t => (
         <div key={t._id} style={{
           background: "white",
@@ -160,50 +158,19 @@ export default function Dashboard() {
           borderRadius: "10px",
           boxShadow: "0 2px 10px rgba(0,0,0,0.05)"
         }}>
-          
           <div style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center"
           }}>
-            
-            {}
             <div>
               <h4 style={{ margin: 0 }}>{t.title}</h4>
 
-              <div style={{
-                display: "flex",
-                gap: "10px",
-                marginTop: "5px",
-                fontSize: "13px",
-                color: "#666"
-              }}>
-                <span>
-                  Status:
-                  <span style={{
-                    marginLeft: "5px",
-                    padding: "2px 6px",
-                    borderRadius: "5px",
-                    background:
-                      t.status === "done"
-                        ? "#d4edda"
-                        : t.status === "in-progress"
-                        ? "#fff3cd"
-                        : "#eee"
-                  }}>
-                    {t.status}
-                  </span>
-                </span>
-
-                <span>|</span>
-
-                <span>
-                  Assigned: <b>{t.assignedTo?.name || "N/A"}</b>
-                </span>
+              <div style={{ fontSize: "13px", color: "#666" }}>
+                Status: {t.status} | Assigned: {t.assignedTo?.name || "N/A"}
               </div>
             </div>
 
-            {}
             {role === "member" && (
               <div style={{ display: "flex", gap: "5px" }}>
                 <button onClick={() => updateStatus(t._id, "todo")} style={smallBtn}>Todo</button>
@@ -211,7 +178,6 @@ export default function Dashboard() {
                 <button onClick={() => updateStatus(t._id, "done")} style={smallBtn}>Done</button>
               </div>
             )}
-
           </div>
         </div>
       ))}

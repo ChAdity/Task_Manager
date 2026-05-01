@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 
 export default function Login() {
+  const API = import.meta.env.VITE_API_URL;
+
   const [isSignup, setIsSignup] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,7 +21,7 @@ export default function Login() {
       setLoading(true);
 
       if (isSignup) {
-        await axios.post("http://localhost:5000/api/auth/register", {
+        await axios.post(`${API}/api/auth/register`, {
           name,
           email,
           password,
@@ -29,7 +31,7 @@ export default function Login() {
         alert("Signup successful");
         setIsSignup(false);
       } else {
-        const res = await axios.post("http://localhost:5000/api/auth/login", {
+        const res = await axios.post(`${API}/api/auth/login`, {
           email,
           password
         });
@@ -40,104 +42,104 @@ export default function Login() {
         window.location = "/dashboard";
       }
     } catch (err) {
-      alert(err.response?.data || "Error occurred");
+      alert(err.response?.data?.message || "Error occurred");
     } finally {
       setLoading(false);
     }
   };
 
   const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginBottom: "10px",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-  outline: "none"
-};
+    width: "100%",
+    padding: "10px",
+    marginBottom: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ddd",
+    outline: "none"
+  };
 
   return (
-  <div style={{
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#f5f5f5"
-  }}>
     <div style={{
-      width: "320px",
-      padding: "30px",
-      borderRadius: "12px",
-      background: "white",
-      boxShadow: "0 5px 20px rgba(0,0,0,0.1)"
+      height: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      background: "#f5f5f5"
     }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-        {isSignup ? "Create Account" : "Welcome Back"}
-      </h2>
+      <div style={{
+        width: "320px",
+        padding: "30px",
+        borderRadius: "12px",
+        background: "white",
+        boxShadow: "0 5px 20px rgba(0,0,0,0.1)"
+      }}>
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+          {isSignup ? "Create Account" : "Welcome Back"}
+        </h2>
 
-      {isSignup && (
-        <>
-          <input
-            placeholder="Name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            style={inputStyle}
-          />
+        {isSignup && (
+          <>
+            <input
+              placeholder="Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              style={inputStyle}
+            />
 
-          <select
-            value={role}
-            onChange={e => setRole(e.target.value)}
-            style={inputStyle}
-          >
-            <option value="member">Member</option>
-            <option value="admin">Admin</option>
-          </select>
-        </>
-      )}
+            <select
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              style={inputStyle}
+            >
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+          </>
+        )}
 
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        style={inputStyle}
-      />
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          style={inputStyle}
+        />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        style={inputStyle}
-      />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          style={inputStyle}
+        />
 
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        style={{
-          width: "100%",
-          padding: "10px",
-          borderRadius: "8px",
-          border: "none",
-          background: "#111",
-          color: "white",
-          cursor: "pointer"
-        }}
-      >
-        {loading ? "Processing..." : isSignup ? "Signup" : "Login"}
-      </button>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: "10px",
+            borderRadius: "8px",
+            border: "none",
+            background: "#111",
+            color: "white",
+            cursor: "pointer"
+          }}
+        >
+          {loading ? "Processing..." : isSignup ? "Signup" : "Login"}
+        </button>
 
-      <p
-        onClick={() => setIsSignup(!isSignup)}
-        style={{
-          marginTop: "15px",
-          textAlign: "center",
-          cursor: "pointer",
-          fontSize: "14px",
-          color: "#555"
-        }}
-      >
-        {isSignup ? "Already have an account? Login" : "New user? Signup"}
-      </p>
+        <p
+          onClick={() => setIsSignup(!isSignup)}
+          style={{
+            marginTop: "15px",
+            textAlign: "center",
+            cursor: "pointer",
+            fontSize: "14px",
+            color: "#555"
+          }}
+        >
+          {isSignup ? "Already have an account? Login" : "New user? Signup"}
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
 }
